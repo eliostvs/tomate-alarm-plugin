@@ -20,12 +20,10 @@ class AlarmPlugin(TomatePlugin):
     )
 
     @suppress_errors
-    def __init__(self):
-        super(AlarmPlugin, self).__init__()
+    def on_init(self):
+        Gst.init(None)
 
         self.profile = ProfileManagerSingleton.get()
-
-        Gst.init(None)
 
         self.player = Gst.ElementFactory.make('playbin', None)
         self.player.set_property('uri', self.profile.get_media_uri('alarm.ogg'))

@@ -7,8 +7,6 @@ from paver.tasks import task
 
 install_distutils_tasks()
 
-PKGNAME = 'tomate-alarm-plugin'
-
 ROOT_PATH = path(__file__).dirname().abspath()
 
 TOMATE_PATH = ROOT_PATH / 'tomate'
@@ -22,11 +20,6 @@ PLUGIN_PATH = DATA_PATH / 'plugins'
 @task
 def default():
     pass
-
-
-@task
-def install():
-    sh('cat packages.txt | sudo xargs apt-get -y --force-yes install')
 
 
 @task
