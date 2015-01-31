@@ -39,6 +39,7 @@ class AlarmPlugin(TomatePlugin):
 
         self.player.set_state(Gst.State.PLAYING)
 
+    @suppress_errors
     def on_message(self, bus, message):
         if message.type == Gst.MessageType.EOS:
             self.player.set_state(Gst.State.NULL)
