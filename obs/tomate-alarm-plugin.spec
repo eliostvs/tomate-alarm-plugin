@@ -22,7 +22,7 @@ Name: %{real_name}-alarm-plugin
 Version: 0.1.0
 Release: 0
 License: GPL-3.0+
-Summary: Plays alarm at session end
+Summary: Tomate alarm plugin
 Source: %{name}-upstream.tar.gz
 Url: https://github.com/eliostvs/tomate-alarm-plugin
 
@@ -48,7 +48,7 @@ Requires: python-gstreamer1
 %endif
 
 %description
-Tomate Plugin. Plays alarm at session end.
+Tomate plugin that plays a alarm at session end.
 
 %prep
 %setup -q -n %{name}-upstream

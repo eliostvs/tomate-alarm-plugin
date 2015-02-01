@@ -1,7 +1,7 @@
 Tomate Alarm Plugin
 ===================
 
-Tomate Plugin. Plays alarm at session end.
+Tomate plugin that plays a alarm at session end.
 
 
 Installation

@@ -17,4 +17,4 @@ Depends: ${misc:Depends},
  gstreamer1.0-plugins-base,
  gstreamer1.0-plugins-good,
  tomate-gtk
-Description: Tomate Plugin. Plays alarm at session end.
+Description: Tomate plugin that plays a alarm at session end.
