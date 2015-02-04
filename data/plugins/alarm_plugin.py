@@ -4,8 +4,9 @@ import logging
 
 import gi
 from gi.repository import Gst
+
 from tomate.plugin import TomatePlugin
-from tomate.profile import ProfileManagerSingleton
+from tomate.profile import ProfileManager
 from tomate.utils import suppress_errors
 
 gi.require_version('Gst', '1.0')
@@ -23,7 +24,7 @@ class AlarmPlugin(TomatePlugin):
     def on_init(self):
         Gst.init(None)
 
-        self.profile = ProfileManagerSingleton.get()
+        self.profile = ProfileManager()
 
         self.player = Gst.ElementFactory.make('playbin', None)
         self.player.set_property('uri', self.profile.get_media_uri('alarm.ogg'))
@@ -35,9 +36,9 @@ class AlarmPlugin(TomatePlugin):
 
     @suppress_errors
     def alarm(self, sender=None, **kwargs):
-        logger.debug('start alarm')
-
         self.player.set_state(Gst.State.PLAYING)
+
+        logger.debug('play ')
 
     @suppress_errors
     def on_message(self, bus, message):

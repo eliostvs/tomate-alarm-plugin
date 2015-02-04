@@ -8,10 +8,10 @@ from mock import Mock, patch
 class AlarmPluginTestCase(unittest.TestCase):
 
     def setUp(self):
-        from tomate.profile import ProfileManagerSingleton
+        from tomate.profile import ProfileManager
         from alarm_plugin import AlarmPlugin
 
-        self.profile = ProfileManagerSingleton.get()
+        self.profile = ProfileManager()
         self.profile.app = ''
 
         self.plugin = AlarmPlugin()
