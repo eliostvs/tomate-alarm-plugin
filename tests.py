@@ -7,14 +7,12 @@ from mock import Mock, patch
 
 class AlarmPluginTestCase(unittest.TestCase):
 
-    def setUp(self):
-        from tomate.profile import ProfileManager
+    @patch('tomate.profile.ProfileManager')
+    def setUp(self, mock_profile):
         from alarm_plugin import AlarmPlugin
 
-        self.profile = ProfileManager()
-        self.profile.app = ''
-
         self.plugin = AlarmPlugin()
+        self.mock_profile = mock_profile
 
     @patch('alarm_plugin.Gst.ElementFactory', spec_set=True)
     def test_should_create_playbin(self, mElementFactory):
@@ -25,7 +23,7 @@ class AlarmPluginTestCase(unittest.TestCase):
 
         mElementFactory.make.assert_called_once_with('playbin', None)
 
-        plugin.player.set_property.assert_called_once_with('uri', self.profile.get_media_uri('alarm.ogg'))
+        plugin.player.set_property.assert_called_once_with('uri', self.plugin.audio)
 
         plugin.player.set_state.assert_called_once_with(Gst.State.NULL)
 
@@ -34,7 +32,7 @@ class AlarmPluginTestCase(unittest.TestCase):
 
         self.plugin.player = Mock()
 
-        self.plugin.alarm()
+        self.plugin.ring()
 
         self.plugin.player.set_state.assert_called_once_with(Gst.State.PLAYING)
         self.assertEqual(1, self.plugin.player.set_state.call_count)

@@ -13,21 +13,21 @@ gi.require_version('Gst', '1.0')
 
 logger = logging.getLogger(__name__)
 
+profile = ProfileManager()
+
 
 class AlarmPlugin(TomatePlugin):
 
     signals = (
-        ('session_ended', 'alarm'),
+        ('session_ended', 'ring'),
     )
 
     @suppress_errors
     def on_init(self):
         Gst.init(None)
 
-        self.profile = ProfileManager()
-
         self.player = Gst.ElementFactory.make('playbin', None)
-        self.player.set_property('uri', self.profile.get_media_uri('alarm.ogg'))
+        self.player.set_property('uri', self.audio)
         self.player.set_state(Gst.State.NULL)
 
         bus = self.player.get_bus()
@@ -35,7 +35,7 @@ class AlarmPlugin(TomatePlugin):
         bus.connect('message', self.on_message)
 
     @suppress_errors
-    def alarm(self, sender=None, **kwargs):
+    def ring(self, *args, **kwargs):
         self.player.set_state(Gst.State.PLAYING)
 
         logger.debug('play ')
@@ -51,3 +51,7 @@ class AlarmPlugin(TomatePlugin):
             self.player.set_state(Gst.State.NULL)
 
             logger.error('alarm error %s - %s', *message.parse_error())
+
+    @property
+    def audio(self):
+        return profile.get_media_uri('alarm.ogg')
