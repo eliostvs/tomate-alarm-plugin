@@ -1,0 +1,12 @@
+gir1.2-gstreamer-1.0
+gstreamer1.0-plugins-base
+python-blinker
+python-coverage
+python-enum34
+python-gi
+python-mock
+python-nose
+python-paver
+python-six
+python-xdg
+python-yapsy

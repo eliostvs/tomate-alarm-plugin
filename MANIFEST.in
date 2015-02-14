@@ -1,0 +1,3 @@
+include AUTHORS COPYING README.md
+recursive-include data/media *.mp3
+recursive-include data/plugins *.py *.plugin
