@@ -64,7 +64,7 @@ python setup.py install --prefix=%{_prefix} --root=%{buildroot}
 %dir %{_datadir}/%{real_name}/
 %{_datadir}/%{real_name}/plugins/
 %{_datadir}/%{real_name}/media/
-%{python_sitelib}/%{module_name}-%{version}-*.egg-info/
+%{python_sitelib}/*
 
 %doc AUTHORS COPYING README.md
 
