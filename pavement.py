@@ -2,10 +2,7 @@
 import os
 
 from paver.easy import needs, path, sh
-from paver.setuputils import install_distutils_tasks
 from paver.tasks import task
-
-install_distutils_tasks()
 
 ROOT_PATH = path(__file__).dirname().abspath()
 

@@ -23,9 +23,9 @@ class AlarmPlugin(Plugin):
     @suppress_errors
     def __init__(self):
         super(AlarmPlugin, self).__init__()
-        Gst.init(None)
-
         self.config = graph.get('tomate.config')
+
+        Gst.init(None)
 
         self.player = Gst.ElementFactory.make('playbin', None)
         self.player.set_property('uri', self.audiopath)
