@@ -5,29 +5,30 @@ import logging
 import gi
 from gi.repository import Gst
 
-from tomate.plugin import TomatePlugin
-from tomate.profile import ProfileManager
+from tomate.graph import graph
+from tomate.plugin import Plugin
 from tomate.utils import suppress_errors
 
 gi.require_version('Gst', '1.0')
 
 logger = logging.getLogger(__name__)
 
-profile = ProfileManager()
 
+class AlarmPlugin(Plugin):
 
-class AlarmPlugin(TomatePlugin):
-
-    signals = (
+    subscriptions = (
         ('session_ended', 'ring'),
     )
 
     @suppress_errors
-    def on_init(self):
+    def __init__(self):
+        super(AlarmPlugin, self).__init__()
+        self.config = graph.get('tomate.config')
+
         Gst.init(None)
 
         self.player = Gst.ElementFactory.make('playbin', None)
-        self.player.set_property('uri', self.audio)
+        self.player.set_property('uri', self.audiopath)
         self.player.set_state(Gst.State.NULL)
 
         bus = self.player.get_bus()
@@ -53,5 +54,5 @@ class AlarmPlugin(TomatePlugin):
             logger.error('alarm error %s - %s', *message.parse_error())
 
     @property
-    def audio(self):
-        return profile.get_media_uri('alarm.ogg')
+    def audiopath(self):
+        return self.config.get_media_uri('alarm.ogg')
