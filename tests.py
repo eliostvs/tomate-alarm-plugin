@@ -7,7 +7,7 @@ from mock import Mock, patch
 from tomate.graph import graph
 
 
-class AlarmPluginTestCase(unittest.TestCase):
+class TestAlarmPlugin(unittest.TestCase):
 
     @patch('gi.repository.Gst.ElementFactory.make')
     def setUp(self, factory):
