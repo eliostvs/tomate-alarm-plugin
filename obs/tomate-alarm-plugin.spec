@@ -19,7 +19,7 @@
 %define module_name %{real_name}_alarm_plugin
 
 Name: %{real_name}-alarm-plugin
-Version: 0.1.0
+Version: 0.2.0
 Release: 0
 License: GPL-3.0+
 Summary: Tomate alarm plugin
@@ -64,7 +64,7 @@ python setup.py install --prefix=%{_prefix} --root=%{buildroot}
 %dir %{_datadir}/%{real_name}/
 %{_datadir}/%{real_name}/plugins/
 %{_datadir}/%{real_name}/media/
-%{python_sitelib}/%{module_name}-%{version}-*.egg-info/
+%{python_sitelib}/*
 
 %doc AUTHORS COPYING README.md
 
