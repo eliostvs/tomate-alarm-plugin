@@ -1,7 +1,8 @@
 #!/bin/env python
 import os
+from optparse import Option
 
-from paver.easy import needs, path, sh
+from paver.easy import cmdopts, needs, path, sh
 from paver.tasks import task
 
 ROOT_PATH = path(__file__).dirname().abspath()
@@ -28,10 +29,13 @@ def clean():
 
 @task
 @needs(['clean'])
+@cmdopts([
+    Option('-v', '--verbosity', default=1, type=int),
+])
 def test(options):
     os.environ['PYTHONPATH'] = '%s:%s' % (TOMATE_PATH, PLUGIN_PATH)
     os.environ['XDG_DATA_DIRS'] = str(DATA_PATH)
-    sh('nosetests --cover-erase --with-coverage tests.py')
+    sh('nosetests --cover-erase --with-coverage --verbosity=%s tests.py' % options.test.verbosity)
 
 
 @task
