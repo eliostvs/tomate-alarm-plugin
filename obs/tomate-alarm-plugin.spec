@@ -31,7 +31,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-build
 BuildRequires: python-devel
 BuildRequires: python-setuptools
 
-Requires: tomate-gtk
+Requires: tomate-gtk >= 0.3.0
 
 %if 0%{?suse_version}
 BuildArchitectures: noarch
