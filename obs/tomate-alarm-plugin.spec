@@ -19,7 +19,7 @@
 %define module_name %{real_name}_alarm_plugin
 
 Name: %{real_name}-alarm-plugin
-Version: 0.2.0
+Version: 0.3.0
 Release: 0
 License: GPL-3.0+
 Summary: Tomate alarm plugin
