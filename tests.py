@@ -5,9 +5,13 @@ import unittest
 from gi.repository import Gst
 from mock import Mock, patch
 from tomate.graph import graph
+from tomate.tests import SubscriptionMixin
 
 
-class TestAlarmPlugin(unittest.TestCase):
+class TestAlarmPlugin(SubscriptionMixin, unittest.TestCase):
+
+    def create_instance(self):
+        return self.plugin
 
     @patch('gi.repository.Gst.ElementFactory.make')
     def setUp(self, factory):
