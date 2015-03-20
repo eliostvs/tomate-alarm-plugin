@@ -19,7 +19,7 @@
 %define module_name %{real_name}_alarm_plugin
 
 Name: %{real_name}-alarm-plugin
-Version: 0.2.0
+Version: 0.3.0
 Release: 0
 License: GPL-3.0+
 Summary: Tomate alarm plugin
@@ -31,7 +31,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-build
 BuildRequires: python-devel
 BuildRequires: python-setuptools
 
-Requires: tomate-gtk
+Requires: tomate-gtk >= 0.3.0
 
 %if 0%{?suse_version}
 BuildArchitectures: noarch
