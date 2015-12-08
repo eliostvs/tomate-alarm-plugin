@@ -4,8 +4,9 @@ import logging
 
 import gi
 from gi.repository import Gst
-from tomate.enums import State
-from tomate.events import Events, on
+
+from tomate.constant import State
+from tomate.event import Events, on
 from tomate.graph import graph
 from tomate.plugin import Plugin
 from tomate.utils import suppress_errors
