@@ -4,7 +4,8 @@ import logging
 
 import gi
 from gi.repository import Gst
-
+from tomate.enums import State
+from tomate.events import Events, on
 from tomate.graph import graph
 from tomate.plugin import Plugin
 from tomate.utils import suppress_errors
@@ -15,10 +16,6 @@ logger = logging.getLogger(__name__)
 
 
 class AlarmPlugin(Plugin):
-
-    subscriptions = (
-        ('session_ended', 'ring'),
-    )
 
     @suppress_errors
     def __init__(self):
@@ -36,6 +33,7 @@ class AlarmPlugin(Plugin):
         bus.connect('message', self.on_message)
 
     @suppress_errors
+    @on(Events.Session, [State.finished])
     def ring(self, *args, **kwargs):
         self.player.set_state(Gst.State.PLAYING)
 
