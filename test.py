@@ -9,7 +9,7 @@ from tomate.graph import graph
 
 class TestAlarmPlugin(unittest.TestCase):
 
-    @patch('gi.repository.Gst.ElementFactory.make')
+    @patch('alarm_plugin.Gst.ElementFactory.make')
     def setUp(self, factory):
         graph.register_instance(
             'tomate.config',
