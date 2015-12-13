@@ -3,7 +3,11 @@ Tomate Alarm Plugin
 
 Tomate is a timer for the Pomodoro Techinique. 
 This plugin plays a alarm at session end.
-You should install the [UI](https://github.com/eliostvs/tomate-gtk) first.
+
+Installation
+------------
+
+Go to [this page](https://github.com/eliostvs/tomate-gtk) for instructions.
 
 
 License
