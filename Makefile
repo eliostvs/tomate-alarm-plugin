@@ -24,5 +24,5 @@ docker-build:
 docker-test:
 	docker run --rm -v $(PROJECT_ROOT):/code $(DOCKER_IMAGE_NAME)
 
-docker-all: docker-clean docker-build docker-test docker-enter:
+docker-all: docker-clean docker-build docker-test docker-enter
 	docker run --rm -v $(PROJECT_ROOT):/code -it --entrypoint="bash" $(DOCKER_IMAGE_NAME)
