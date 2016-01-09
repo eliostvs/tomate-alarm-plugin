@@ -1,10 +1,11 @@
 Source: tomate-alarm-plugin
 Section: python
 Priority: optional
-Build-Depends: debhelper (>= 8), python-all, python-setuptools
+Build-Depends: debhelper (>= 8), python-all, python-setuptools, python3-all, python3-setuptools
 Maintainer: Elio Esteves Duarte <elio.esteves.duarte@gmail.com>
 Standards-Version: 3.9.5
-X-Python-Version: >= 2.6
+X-Python-Version: >= 2.7
+X-Python-Version: >= 3.2
 Homepage: https://github.com/eliostvs/tomate-alarm-plugin
 
 Package: tomate-alarm-plugin
@@ -15,4 +16,18 @@ Depends: ${misc:Depends},
  gstreamer1.0-plugins-base,
  gstreamer1.0-plugins-good,
  tomate-gtk (>= 0.3.0)
-Description: Tomate plugin that plays a alarm at session end.
+Description: Tomate plugin that plays a alarm at session end
+.
+This package installs the library for Python 2.
+
+Package: tomate-alarm-plugin3
+Architecture: all
+Depends: ${misc:Depends},
+ ${python3:Depends},
+ gir1.2-gstreamer-1.0,
+ gstreamer1.0-plugins-base,
+ gstreamer1.0-plugins-good,
+ tomate-gtk (>= 0.3.0)
+Description: Tomate plugin that plays a alarm at session end
+.
+This package installs the library for Python 3.
