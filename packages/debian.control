@@ -22,8 +22,8 @@ Depends: ${misc:Depends},
  gstreamer1.0-plugins-good,
  tomate-gtk (>= 0.3.0)
 Description: Tomate plugin that plays a alarm at session end
-.
-This package installs the library for Python 2.
+ .
+ This package installs the library for Python 2.
 
 Package: tomate-alarm-plugin3
 Architecture: all
@@ -34,5 +34,5 @@ Depends: ${misc:Depends},
  gstreamer1.0-plugins-good,
  tomate-gtk (>= 0.3.0)
 Description: Tomate plugin that plays a alarm at session end
-.
-This package installs the library for Python 3.
+ .
+ This package installs the library for Python 3.
