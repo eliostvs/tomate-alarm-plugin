@@ -5,10 +5,10 @@ import logging
 import gi
 from gi.repository import Gst
 
+import tomate.plugin
 from tomate.constant import State
 from tomate.event import Events, on
 from tomate.graph import graph
-from tomate.plugin import Plugin
 from tomate.utils import suppress_errors
 
 gi.require_version('Gst', '1.0')
@@ -16,7 +16,7 @@ gi.require_version('Gst', '1.0')
 logger = logging.getLogger(__name__)
 
 
-class AlarmPlugin(Plugin):
+class AlarmPlugin(tomate.plugin.Plugin):
 
     @suppress_errors
     def __init__(self):
