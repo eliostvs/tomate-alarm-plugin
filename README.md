@@ -19,7 +19,7 @@ Changelog
 
 ### v0.5.0
 
-- Bugs fixed
+- Remove linux package metadata
 
 ### v0.4.0
 
