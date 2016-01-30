@@ -17,6 +17,10 @@ Bugs and suggestions should be reported [here](https://github.com/eliostvs/tomat
 Changelog
 ---------
 
+### v0.5.0
+
+- Remove linux package metadata
+
 ### v0.4.0
 
 - Using the new event system
