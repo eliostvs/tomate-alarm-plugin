@@ -17,6 +17,9 @@ Bugs and suggestions should be reported [here](https://github.com/eliostvs/tomat
 Changelog
 ---------
 
+### v0.5.1
+- Using py.test
+
 ### v0.5.0
 
 - Remove linux package metadata
