@@ -34,7 +34,7 @@ def test_create_playbin(make):
     from alarm_plugin import AlarmPlugin
 
     plugin = AlarmPlugin()
-    
+
     make.assert_called_once_with('playbin', None)
 
     plugin.player.set_property.assert_called_once_with('uri', '/usr/share/tomate/media/alarm.ogg')
