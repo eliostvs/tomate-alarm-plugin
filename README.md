@@ -2,7 +2,7 @@ Tomate Alarm Plugin
 ===================
 
 Tomate is a timer for the Pomodoro Techinique.
-This plugin plays a alarm at session end.
+This plugin plays a alarm when the timer ends.
 
 Installation
 ------------
