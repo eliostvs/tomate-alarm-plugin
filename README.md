@@ -14,8 +14,8 @@ Bugs and Suggetions
 
 Bugs and suggestions should be reported [here](https://github.com/eliostvs/tomate-alarm-plugin/issues).
 
-Changelog
----------
+Change Logs
+-----------
 
 ### v0.6.0
 
