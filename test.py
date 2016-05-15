@@ -57,6 +57,7 @@ def test_player_should_change_state_to_null(plugin, message):
 
 
 def test_player_should_change_state_to_null_when_error(plugin, message):
+    message.type = Gst.MessageType.ERROR
     message.parse_error.return_value = ('', '')
 
     plugin.player.reset_mock()
