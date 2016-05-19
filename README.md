@@ -1,8 +1,8 @@
 Tomate Alarm Plugin
 ===================
 
-Tomate is a timer for the Pomodoro Techinique. 
-This plugin plays a alarm at session end.
+Tomate is a timer for the Pomodoro Techinique.
+This plugin plays a alarm when the timer ends.
 
 Installation
 ------------
@@ -14,14 +14,19 @@ Bugs and Suggetions
 
 Bugs and suggestions should be reported [here](https://github.com/eliostvs/tomate-alarm-plugin/issues).
 
-Changelog
----------
+Change Logs
+-----------
 
-### v0.5.0
+### 0.6.0
+
+- Using py.test
+- Fix gtk warnings
+
+### 0.5.0
 
 - Remove linux package metadata
 
-### v0.4.0
+### 0.4.0
 
 - Using the new event system
 

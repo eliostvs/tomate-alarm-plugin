@@ -3,6 +3,9 @@ from __future__ import unicode_literals
 import logging
 
 import gi
+
+gi.require_version('Gst', '1.0')
+
 from gi.repository import Gst
 
 import tomate.plugin
@@ -11,7 +14,6 @@ from tomate.event import Events, on
 from tomate.graph import graph
 from tomate.utils import suppress_errors
 
-gi.require_version('Gst', '1.0')
 
 logger = logging.getLogger(__name__)
 

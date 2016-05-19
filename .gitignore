@@ -21,4 +21,4 @@ dist
 docs/*
 sdist
 *.sublime-*
-tomate/
+*.cache
