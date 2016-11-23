@@ -14,10 +14,12 @@ from tomate.event import Events, on
 from tomate.graph import graph
 from tomate.utils import suppress_errors
 
+
 logger = logging.getLogger(__name__)
 
 
 class AlarmPlugin(tomate.plugin.Plugin):
+
     @suppress_errors
     def __init__(self):
         super(AlarmPlugin, self).__init__()
@@ -26,7 +28,7 @@ class AlarmPlugin(tomate.plugin.Plugin):
         Gst.init(None)
 
         self.player = Gst.ElementFactory.make('playbin', None)
-        self.player.set_property('uri', self.audio_path)
+        self.player.set_property('uri', self.audiopath)
         self.player.set_state(Gst.State.NULL)
 
         bus = self.player.get_bus()
@@ -34,7 +36,7 @@ class AlarmPlugin(tomate.plugin.Plugin):
         bus.connect('message', self.on_message)
 
     @suppress_errors
-    @on(Events['Session'], [State.finished])
+    @on(Events.Session, [State.finished])
     def ring(self, *args, **kwargs):
         self.player.set_state(Gst.State.PLAYING)
 
@@ -53,5 +55,5 @@ class AlarmPlugin(tomate.plugin.Plugin):
             logger.error('alarm error %s - %s', *message.parse_error())
 
     @property
-    def audio_path(self):
+    def audiopath(self):
         return self.config.get_media_uri('alarm.ogg')

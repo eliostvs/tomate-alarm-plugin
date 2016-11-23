@@ -17,10 +17,6 @@ Bugs and suggestions should be reported [here](https://github.com/eliostvs/tomat
 Change Logs
 -----------
 
-### 0.7.0
-
-- Using new event api
-
 ### 0.6.0
 
 - Using py.test
