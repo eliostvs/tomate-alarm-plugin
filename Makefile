@@ -20,6 +20,9 @@ clean:
 test: clean
 	$(XDG_DATA_DIRS) $(PYTHONPATH) py.test test.py --cov-report term-missing --cov=$(PLUGIN_PATH) --flake8 -v
 
+lint:
+	flake8
+
 docker-clean:
 	docker rmi $(DOCKER_IMAGE_NAME) 2> /dev/null || echo $(DOCKER_IMAGE_NAME) not found!
 
@@ -34,6 +37,9 @@ docker-all: docker-clean docker-build docker-test docker-enter
 
 docker-enter:
 	docker run --rm -v $(PACKAGE_ROOT):/code -it --entrypoint="bash" $(DOCKER_IMAGE_NAME)
+
+docker-lint:
+	docker run --rm -v $(PACKAGE_ROOT):/code $(DOCKER_IMAGE_NAME) lint
 
 trigger-build:
 	curl -X POST -H "Authorization: Token $(TOKEN)" $(OBS_API_URL)
