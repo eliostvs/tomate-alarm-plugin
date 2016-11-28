@@ -8,6 +8,7 @@ PYTHONPATH = PYTHONPATH=$(TOMATE_PATH):$(PLUGIN_PATH)
 XDG_DATA_DIRS = XDG_DATA_DIRS=$(DATA_PATH):/home/$(USER)/.local/share:/usr/local/share:/usr/share
 DOCKER_IMAGE_NAME= $(AUTHOR)/$(PACKAGE)
 PROJECT = home:eliostvs:tomate
+DEBUG = TOMATE_DEBUG=true
 OBS_API_URL = https://api.opensuse.org:443/trigger/runservice?project=$(PROJECT)&package=$(PACKAGE)
 
 submodule:
@@ -18,7 +19,7 @@ clean:
 	find . \( -iname "*.pyc" -o -iname "__pycache__" \) -print0 | xargs -0 rm -rf
 
 test: clean
-	$(XDG_DATA_DIRS) $(PYTHONPATH) py.test tests.py --cov=$(PLUGIN_PATH)
+	$(XDG_DATA_DIRS) $(PYTHONPATH) $(DEBUG) py.test tests.py --cov=$(PLUGIN_PATH)
 
 lint:
 	flake8
