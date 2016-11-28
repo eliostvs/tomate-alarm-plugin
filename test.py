@@ -1,6 +1,10 @@
 from __future__ import unicode_literals
 
+import gi
 import pytest
+
+gi.require_version('Gst', '1.0')
+
 from gi.repository import Gst
 from mock import Mock, patch
 from tomate.graph import graph
