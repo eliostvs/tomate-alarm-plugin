@@ -18,7 +18,7 @@ clean:
 	find . \( -iname "*.pyc" -o -iname "__pycache__" \) -print0 | xargs -0 rm -rf
 
 test: clean
-	$(XDG_DATA_DIRS) $(PYTHONPATH) py.test test.py --cov-report term-missing --cov=$(PLUGIN_PATH) --flake8 -v
+	$(XDG_DATA_DIRS) $(PYTHONPATH) py.test tests.py --cov=$(PLUGIN_PATH)
 
 lint:
 	flake8
