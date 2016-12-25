@@ -34,7 +34,7 @@ class AlarmPlugin(tomate.plugin.Plugin):
         bus.connect('message', self.on_message)
 
     @suppress_errors
-    @on(Events['Session'], [State.finished])
+    @on(Events.Session, [State.finished])
     def ring(self, *args, **kwargs):
         self.player.set_state(Gst.State.PLAYING)
 
