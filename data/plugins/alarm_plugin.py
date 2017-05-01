@@ -91,20 +91,20 @@ class PreferenceDialog:
         self.widget.connect('response', lambda widget, response: widget.hide())
         self.widget.set_size_request(350, 200)
 
-        self.custom_option = Gtk.Switch(hexpand=True, halign=Gtk.Align.START)
-        self.custom_option.connect('notify::active', self.on_option_activate)
+        self.option_switch = Gtk.Switch(hexpand=True, halign=Gtk.Align.START)
+        self.option_switch.connect('notify::active', self.on_option_activate)
 
         label = Gtk.Label(_('Custom alarm:'),
                           margin_right=12,
                           hexpand=True,
                           halign=Gtk.Align.END)
 
-        self.file_path = Gtk.Entry(editable=False,
-                                   sensitive=False,
-                                   secondary_icon_name=Gtk.STOCK_FILE,
-                                   secondary_icon_activatable=True)
+        self.path_entry = Gtk.Entry(editable=False,
+                                    sensitive=False,
+                                    secondary_icon_name=Gtk.STOCK_FILE,
+                                    secondary_icon_activatable=True)
 
-        self.file_path.connect('icon-press', self.on_icon_press)
+        self.path_entry.connect('icon-press', self.on_icon_press)
 
         grid = Gtk.Grid(
             column_spacing=6,
@@ -116,8 +116,8 @@ class PreferenceDialog:
         )
 
         grid.attach(label, 0, 0, 1, 1)
-        grid.attach_next_to(self.custom_option, label, Gtk.PositionType.RIGHT, 1, 1)
-        grid.attach(self.file_path, 0, 1, 4, 1)
+        grid.attach_next_to(self.option_switch, label, Gtk.PositionType.RIGHT, 1, 1)
+        grid.attach(self.path_entry, 0, 1, 4, 1)
 
         self.widget.get_content_area().add(grid)
 
@@ -131,28 +131,28 @@ class PreferenceDialog:
 
         file_uri = self.config.get(CONFIG_SECTION_NAME, CONFIG_OPTION_NAME)
         if file_uri is not None:
-            self.custom_option.set_active(True)
-            self.file_path.set_sensitive(True)
-            self.file_path.set_text(file_uri)
+            self.option_switch.set_active(True)
+            self.path_entry.set_sensitive(True)
+            self.path_entry.set_text(file_uri)
         else:
-            self.custom_option.set_active(False)
-            self.file_path.set_sensitive(False)
+            self.option_switch.set_active(False)
+            self.path_entry.set_sensitive(False)
 
     def on_option_activate(self, switch, param):
         if switch.get_active():
-            self.file_path.set_sensitive(True)
+            self.path_entry.set_sensitive(True)
         else:
             self.reset_option()
 
     def reset_option(self):
-        if self.file_path.get_text():
-            logger.debug('action=alarmOptionReset needed=true')
-            self.file_path.set_text('')
+        if self.path_entry.get_text():
+            logger.debug('action=resetCustomAlarm needed=true')
+            self.path_entry.set_text('')
             self.config.remove(CONFIG_SECTION_NAME, CONFIG_OPTION_NAME)
         else:
-            logger.debug('action=alarmOptionReset needed=false')
+            logger.debug('action=resetCustomAlarm needed=false')
 
-        self.file_path.set_sensitive(False)
+        self.path_entry.set_sensitive(False)
 
     def on_icon_press(self, entry, icon_pos, event):
         dialog = Gtk.FileChooserDialog(_('Please choose a file'),
@@ -161,8 +161,8 @@ class PreferenceDialog:
                                        (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
                                         Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
 
-        dialog.add_filter(self.create_filter('audio/ogg', 'audio/ogg'))
         dialog.add_filter(self.create_filter('audio/mp3', 'audio/mpeg'))
+        dialog.add_filter(self.create_filter('audio/ogg', 'audio/ogg'))
 
         if entry.get_text():
             current_folder = self.get_current_folder(entry)
