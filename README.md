@@ -19,7 +19,7 @@ Change Logs
 
 ### 0.7.0
 
-- Using new event api
+- Change alarm
 
 ### 0.6.0
 
