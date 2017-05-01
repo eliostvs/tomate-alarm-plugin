@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 import logging
 import os
 from locale import gettext as _
-
 from urllib.parse import urlparse
 
 import gi
@@ -42,7 +41,7 @@ class AlarmPlugin(tomate.plugin.Plugin):
         bus.add_signal_watch()
         bus.connect('message', self.on_message)
 
-        self.preference_dialog = PreferenceDialog(self.config)
+        self.preference_window = PreferenceDialog(self.config)
 
     @suppress_errors
     @on(Events.Session, [State.finished])
@@ -73,7 +72,7 @@ class AlarmPlugin(tomate.plugin.Plugin):
         return file_uri
 
     def settings_window(self):
-        return self.preference_dialog.run()
+        return self.preference_window.run()
 
 
 class PreferenceDialog:
@@ -95,7 +94,7 @@ class PreferenceDialog:
         self.option_switch.connect('notify::active', self.on_option_activate)
 
         label = Gtk.Label(_('Custom alarm:'),
-                          margin_right=12,
+                          margin_right=6,
                           hexpand=True,
                           halign=Gtk.Align.END)
 
