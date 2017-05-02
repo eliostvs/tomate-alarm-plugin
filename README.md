@@ -19,7 +19,8 @@ Change Logs
 
 ### 0.7.0
 
-- Change alarm
+- Configure alarm
+- Python 3 only
 
 ### 0.6.0
 
