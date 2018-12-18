@@ -1,12 +1,11 @@
-from __future__ import unicode_literals
-
 import gi
 import pytest
+
+from unittest.mock import patch, Mock
 
 gi.require_version('Gst', '1.0')
 
 from gi.repository import Gst
-from mock import Mock, patch
 from tomate.graph import graph
 
 
@@ -18,8 +17,8 @@ def setup_module():
 
 
 @pytest.fixture(autouse=True)
-def config():
-    mock = Mock()
+def config(mocker):
+    mock = mocker.Mock()
     graph.register_instance('tomate.config', mock)
     return mock
 
@@ -33,8 +32,8 @@ def plugin(factory_make):
 
 
 @pytest.fixture()
-def message():
-    mock = Mock()
+def message(mocker):
+    mock = mocker.Mock()
     mock.type = Gst.MessageType.EOS
 
     return mock
