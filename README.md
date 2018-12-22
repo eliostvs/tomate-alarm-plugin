@@ -17,9 +17,11 @@ Bugs and suggestions should be reported [here](https://github.com/eliostvs/tomat
 Change Logs
 -----------
 
+### 0.8.0
+
 ### 0.7.0
 
-- Configure alarm
+- Choose alarm file
 - Python 3 only
 
 ### 0.6.0
