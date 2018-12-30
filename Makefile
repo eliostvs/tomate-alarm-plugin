@@ -11,6 +11,7 @@ PROJECT = home:eliostvs:tomate
 DEBUG = TOMATE_DEBUG=true
 OBS_API_URL = https://api.opensuse.org:443/trigger/runservice
 WORK_DIR=/code
+CURRENT_VERSION = `cat .bumpversion.cfg | grep current_version | awk '{print $$3}'`
 
 ifeq ($(shell which xvfb-run 1> /dev/null && echo yes),yes)
 	TEST_PREFIX = xvfb-run -a
@@ -42,12 +43,11 @@ docker-all: docker-clean docker-pull docker-test docker-enter
 docker-enter:
 	docker run --rm -v $(PACKAGE_ROOT):$(WORK_DIR) --workdir $(WORKDIR) -it --entrypoint="bash" $(DOCKER_IMAGE_NAME)
 
-release-%:
-	grep -q '\[Unreleased\]' || echo 'Create the [Unreleased] section in the changelog first!'
-	bumpversion --verbose --commit $*
-	git flow release start $(CURRENT_VERSION)
-	git flow release finish -p $(CURRENT_VERSION)
-	git push --tags
-
 trigger-build:
 	curl -X POST -H "Authorization: Token $(TOKEN)" $(OBS_API_URL)
+
+release-%:
+	@grep -q '\[Unreleased\]' README.md || (echo 'Create the [Unreleased] section in the changelog first!' && exit)
+	bumpversion --verbose --commit $*
+	git flow release start $(CURRENT_VERSION)
+	GIT_MERGE_AUTOEDIT=no git flow release finish -m "Merge branch release/$(CURRENT_VERSION)" -T $(CURRENT_VERSION) $(CURRENT_VERSION)
