@@ -17,7 +17,11 @@ Bugs and suggestions should be reported [here](https://github.com/eliostvs/tomat
 Change Logs
 -----------
 
-### 0.8.0
+### [Unreleased]
+
+#### Changed
+
+- Using new session/task API
 
 ### 0.7.0
 
