@@ -21,7 +21,7 @@ Change Logs
 
 #### Changed
 
-- The enum Task was renamed to Sessions
+- The Task enum was renamed to Sessions
 
 ### 0.7.0
 
