@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import logging
 import os
 from locale import gettext as _
@@ -80,39 +78,30 @@ class PreferenceDialog:
         self.config = config
 
         self.widget = Gtk.Dialog(
-            _('Preferences'),
-            None,
+            border_width=11,
             modal=True,
             resizable=False,
+            title=_('Preferences'),
             window_position=Gtk.WindowPosition.CENTER_ON_PARENT,
-            buttons=(Gtk.STOCK_CLOSE, Gtk.ResponseType.CLOSE)
         )
+        self.widget.add_button(_("Close"), Gtk.ResponseType.CLOSE)
         self.widget.connect('response', lambda widget, response: widget.hide())
-        self.widget.set_size_request(350, 200)
+        self.widget.set_size_request(350, -1)
 
         self.option_switch = Gtk.Switch(hexpand=True, halign=Gtk.Align.START)
         self.option_switch.connect('notify::active', self.on_option_activate)
 
-        label = Gtk.Label(_('Custom alarm:'),
-                          margin_right=6,
-                          hexpand=True,
-                          halign=Gtk.Align.END)
+        label = Gtk.Label(label=_('Custom alarm:'), hexpand=True, halign=Gtk.Align.END)
 
         self.path_entry = Gtk.Entry(editable=False,
                                     sensitive=False,
+                                    hexpand=True,
                                     secondary_icon_name=Gtk.STOCK_FILE,
                                     secondary_icon_activatable=True)
 
         self.path_entry.connect('icon-press', self.on_icon_press)
 
-        grid = Gtk.Grid(
-            column_spacing=6,
-            margin_bottom=12,
-            margin_left=12,
-            margin_right=12,
-            margin_top=12,
-            row_spacing=6,
-        )
+        grid = Gtk.Grid(column_spacing=12, row_spacing=12, margin_bottom=12)
 
         grid.attach(label, 0, 0, 1, 1)
         grid.attach_next_to(self.option_switch, label, Gtk.PositionType.RIGHT, 1, 1)
