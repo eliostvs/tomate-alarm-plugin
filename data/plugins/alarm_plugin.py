@@ -5,8 +5,8 @@ from urllib.parse import urlparse
 
 import gi
 
-gi.require_version('Gst', '1.0')
-gi.require_version('Gtk', '3.0')
+gi.require_version("Gst", "1.0")
+gi.require_version("Gtk", "3.0")
 
 from gi.repository import Gst, Gtk
 
@@ -18,8 +18,8 @@ from tomate.utils import suppress_errors
 
 logger = logging.getLogger(__name__)
 
-CONFIG_SECTION_NAME = 'alarm_plugin'
-CONFIG_OPTION_NAME = 'file_uri'
+CONFIG_SECTION_NAME = "alarm_plugin"
+CONFIG_OPTION_NAME = "file_uri"
 
 
 class AlarmPlugin(tomate.plugin.Plugin):
@@ -28,33 +28,33 @@ class AlarmPlugin(tomate.plugin.Plugin):
     @suppress_errors
     def __init__(self):
         super(AlarmPlugin, self).__init__()
-        self.config = graph.get('tomate.config')
+        self.config = graph.get("tomate.config")
 
         Gst.init(None)
 
-        self.player = Gst.ElementFactory.make('playbin', None)
+        self.player = Gst.ElementFactory.make("playbin", None)
         self.player.set_state(Gst.State.NULL)
 
         bus = self.player.get_bus()
         bus.add_signal_watch()
-        bus.connect('message', self.on_message)
+        bus.connect("message", self.on_message)
 
         self.preference_window = PreferenceDialog(self.config)
 
     @suppress_errors
     @on(Events.Session, [State.finished])
     def ring(self, *args, **kwargs):
-        self.player.set_property('uri', self.audio_path)
-        logger.debug('action=alarmStart uri=%s', self.audio_path)
+        self.player.set_property("uri", self.audio_path)
+        logger.debug("action=alarmStart uri=%s", self.audio_path)
 
         self.player.set_state(Gst.State.PLAYING)
 
     @suppress_errors
-    def on_message(self, bus, message):
+    def on_message(self, _, message):
         if message.type == Gst.MessageType.EOS:
             self.player.set_state(Gst.State.NULL)
 
-            logger.debug('action=alarmComplete')
+            logger.debug("action=alarmComplete")
 
         elif message.type == Gst.MessageType.ERROR:
             self.player.set_state(Gst.State.NULL)
@@ -65,7 +65,7 @@ class AlarmPlugin(tomate.plugin.Plugin):
     def audio_path(self):
         file_uri = self.config.get(CONFIG_SECTION_NAME, CONFIG_OPTION_NAME)
         if file_uri is None:
-            file_uri = self.config.get_media_uri('alarm.ogg')
+            file_uri = self.config.get_media_uri("alarm.ogg")
 
         return file_uri
 
@@ -81,25 +81,27 @@ class PreferenceDialog:
             border_width=11,
             modal=True,
             resizable=False,
-            title=_('Preferences'),
+            title=_("Preferences"),
             window_position=Gtk.WindowPosition.CENTER_ON_PARENT,
         )
         self.widget.add_button(_("Close"), Gtk.ResponseType.CLOSE)
-        self.widget.connect('response', lambda widget, response: widget.hide())
+        self.widget.connect("response", lambda widget, response: widget.hide())
         self.widget.set_size_request(350, -1)
 
         self.option_switch = Gtk.Switch(hexpand=True, halign=Gtk.Align.START)
-        self.option_switch.connect('notify::active', self.on_option_activate)
+        self.option_switch.connect("notify::active", self.on_option_activate)
 
-        label = Gtk.Label(label=_('Custom alarm:'), hexpand=True, halign=Gtk.Align.END)
+        label = Gtk.Label(label=_("Custom alarm:"), hexpand=True, halign=Gtk.Align.END)
 
-        self.path_entry = Gtk.Entry(editable=False,
-                                    sensitive=False,
-                                    hexpand=True,
-                                    secondary_icon_name=Gtk.STOCK_FILE,
-                                    secondary_icon_activatable=True)
+        self.path_entry = Gtk.Entry(
+            editable=False,
+            sensitive=False,
+            hexpand=True,
+            secondary_icon_name=Gtk.STOCK_FILE,
+            secondary_icon_activatable=True,
+        )
 
-        self.path_entry.connect('icon-press', self.on_icon_press)
+        self.path_entry.connect("icon-press", self.on_icon_press)
 
         grid = Gtk.Grid(column_spacing=12, row_spacing=12, margin_bottom=12)
 
@@ -115,7 +117,7 @@ class PreferenceDialog:
         return self.widget
 
     def read_config(self):
-        logger.debug('action=readConfig')
+        logger.debug("action=readConfig")
 
         file_uri = self.config.get(CONFIG_SECTION_NAME, CONFIG_OPTION_NAME)
         if file_uri is not None:
@@ -126,7 +128,7 @@ class PreferenceDialog:
             self.option_switch.set_active(False)
             self.path_entry.set_sensitive(False)
 
-    def on_option_activate(self, switch, param):
+    def on_option_activate(self, switch, _):
         if switch.get_active():
             self.path_entry.set_sensitive(True)
         else:
@@ -134,30 +136,36 @@ class PreferenceDialog:
 
     def reset_option(self):
         if self.path_entry.get_text():
-            logger.debug('action=resetCustomAlarm needed=true')
-            self.path_entry.set_text('')
+            logger.debug("action=resetCustomAlarm needed=true")
+            self.path_entry.set_text("")
             self.config.remove(CONFIG_SECTION_NAME, CONFIG_OPTION_NAME)
         else:
-            logger.debug('action=resetCustomAlarm needed=false')
+            logger.debug("action=resetCustomAlarm needed=false")
 
         self.path_entry.set_sensitive(False)
 
     def on_icon_press(self, entry, icon_pos, event):
-        dialog = Gtk.FileChooserDialog(_('Please choose a file'),
-                                       self.widget,
-                                       Gtk.FileChooserAction.OPEN,
-                                       (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL,
-                                        Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+        dialog = Gtk.FileChooserDialog(
+            _("Please choose a file"),
+            self.widget,
+            Gtk.FileChooserAction.OPEN,
+            (
+                Gtk.STOCK_CANCEL,
+                Gtk.ResponseType.CANCEL,
+                Gtk.STOCK_OPEN,
+                Gtk.ResponseType.OK,
+            ),
+        )
 
-        dialog.add_filter(self.create_filter('audio/mp3', 'audio/mpeg'))
-        dialog.add_filter(self.create_filter('audio/ogg', 'audio/ogg'))
+        dialog.add_filter(self.create_filter("audio/mp3", "audio/mpeg"))
+        dialog.add_filter(self.create_filter("audio/ogg", "audio/ogg"))
 
         if entry.get_text():
             current_folder = self.get_current_folder(entry)
         else:
-            current_folder = os.path.expanduser('~')
+            current_folder = os.path.expanduser("~")
 
-        logger.debug('action=setFileChooserFolder folder=%s', current_folder)
+        logger.debug("action=setFileChooserFolder folder=%s", current_folder)
         dialog.set_current_folder(current_folder)
 
         response = dialog.run()
@@ -172,7 +180,7 @@ class PreferenceDialog:
         return os.path.dirname(urlparse(entry.get_text()).path)
 
     def config_option(self, entry, uri):
-        logger.debug('action=setAlarmFile uri=%s', uri)
+        logger.debug("action=setAlarmFile uri=%s", uri)
         self.config.set(CONFIG_SECTION_NAME, CONFIG_OPTION_NAME, uri)
         entry.set_text(uri)
 
