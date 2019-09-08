@@ -1,22 +1,18 @@
-PACKAGE = tomate-alarm-plugin
-AUTHOR = eliostvs
-PACKAGE_ROOT = $(CURDIR)
-TOMATE_PATH = $(PACKAGE_ROOT)/tomate
-DATA_PATH = $(PACKAGE_ROOT)/data
-PLUGIN_PATH = $(DATA_PATH)/plugins
-PYTHONPATH = PYTHONPATH=$(TOMATE_PATH):$(PLUGIN_PATH)
-XDG_DATA_DIRS = XDG_DATA_DIRS=$(DATA_PATH):/home/$(USER)/.local/share:/usr/local/share:/usr/share
-DOCKER_IMAGE_NAME= $(AUTHOR)/tomate
-PROJECT = home:eliostvs:tomate
-DEBUG = TOMATE_DEBUG=true
-OBS_API_URL = https://api.opensuse.org:443/trigger/runservice
-WORK_DIR=/code
-CURRENT_VERSION = `cat .bumpversion.cfg | grep current_version | awk '{print $$3}'`
+#.SILENT:
+
+DATAPATH     = XDG_DATA_DIRS=$(CURDIR)/data:/home/$(USER)/.local/share:/usr/local/share:/usr/share
+DEBUG 		 = TOMATE_DEBUG=true
+DOCKER_IMAGE = eliostvs/tomate
+OBS_API_URL  = https://api.opensuse.org:443/trigger/runservice
+PLUGINPATH   = $(CURDIR)/data/plugins
+PYTHONPATH   = PYTHONPATH=$(CURDIR)/tomate:$(PLUGINPATH)
+VERSION 	 = `cat .bumpversion.cfg | grep current_version | awk '{print $$3}'`
+WORKDIR 	 = /code
 
 ifeq ($(shell which xvfb-run 1> /dev/null && echo yes),yes)
-	TEST_PREFIX = xvfb-run -a
+	ARGS = xvfb-run -a
 else
-	TEST_PREFIX =
+	ARGS =
 endif
 
 submodule:
@@ -24,24 +20,24 @@ submodule:
 	git submodule update;
 
 clean:
-	find . \( -iname "*.pyc" -o -iname "__pycache__" \) -print0 | xargs -0 rm -rf
+	find . \( -iname "*.pyc" -o -iname "__pycache__" -o -iname ".coverage" -o -iname ".cache" \) -print0 | xargs -0 rm -rf
 
 test: clean
-	$(XDG_DATA_DIRS) $(PYTHONPATH) $(DEBUG) $(TEST_PREFIX) py.test test_plugin.py --cov=$(PLUGIN_PATH)
+	$(DATAPATH) $(PYTHONPATH) $(DEBUG) $(ARGS) py.test test_plugin.py --cov=$(PLUGINPATH)
 
 docker-clean:
-	docker rmi $(DOCKER_IMAGE_NAME) 2> /dev/null || echo $(DOCKER_IMAGE_NAME) not found!
+	docker rmi $(DOCKER_IMAGE) 2> /dev/null || echo $(DOCKER_IMAGE) not found!
 
 docker-pull:
-	docker pull $(DOCKER_IMAGE_NAME)
+	docker pull $(DOCKER_IMAGE)
 
 docker-test:
-	docker run --rm -v $(PACKAGE_ROOT):$(WORK_DIR) --workdir $(WORK_DIR)  $(DOCKER_IMAGE_NAME)
+	docker run --rm -v $(CURDIR):$(WORKDIR) --workdir $(WORKDIR)  $(DOCKER_IMAGE)
 
 docker-all: docker-clean docker-pull docker-test docker-enter
 
 docker-enter:
-	docker run --rm -v $(PACKAGE_ROOT):$(WORK_DIR) --workdir $(WORKDIR) -it --entrypoint="bash" $(DOCKER_IMAGE_NAME)
+	docker run --rm -v $(CURDIR):$(WORKDIR) --workdir $(WORKDIR) -it --entrypoint="bash" $(DOCKER_IMAGE)
 
 trigger-build:
 	curl -X POST -H "Authorization: Token $(TOKEN)" $(OBS_API_URL)
@@ -50,5 +46,5 @@ release-%:
 	git flow init -d
 	@grep -q '\[Unreleased\]' README.md || (echo 'Create the [Unreleased] section in the changelog first!' && exit)
 	bumpversion --verbose --commit $*
-	git flow release start $(CURRENT_VERSION)
-	GIT_MERGE_AUTOEDIT=no git flow release finish -m "Merge branch release/$(CURRENT_VERSION)" -T $(CURRENT_VERSION) $(CURRENT_VERSION) -p
+	git flow release start $(VERSION)
+	GIT_MERGE_AUTOEDIT=no git flow release finish -m "Merge branch release/$(VERSION)" -T $(VERSION) $(VERSION) -p
