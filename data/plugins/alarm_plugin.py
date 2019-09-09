@@ -10,11 +10,10 @@ gi.require_version("Gtk", "3.0")
 
 from gi.repository import Gst, Gtk
 
-import tomate.plugin
-from tomate.constant import State
-from tomate.event import Events, on
-from tomate.graph import graph
-from tomate.utils import suppress_errors
+from tomate.core import State
+from tomate.core.event import Events, on
+from tomate.core.graph import graph
+from tomate.core.plugin import Plugin, suppress_errors
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +21,7 @@ CONFIG_SECTION_NAME = "alarm_plugin"
 CONFIG_OPTION_NAME = "file_uri"
 
 
-class AlarmPlugin(tomate.plugin.Plugin):
+class AlarmPlugin(Plugin):
     has_settings = True
 
     @suppress_errors

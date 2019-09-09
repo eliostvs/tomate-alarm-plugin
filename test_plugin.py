@@ -6,7 +6,8 @@ from unittest.mock import patch, Mock
 gi.require_version("Gst", "1.0")
 
 from gi.repository import Gst
-from tomate.graph import graph
+
+from tomate.core.graph import graph
 
 
 def setup_module():

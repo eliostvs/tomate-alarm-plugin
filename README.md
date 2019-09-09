@@ -17,6 +17,12 @@ Bugs and suggestions should be reported [here](https://github.com/eliostvs/tomat
 Change Logs
 -----------
 
+### [Unreleased]
+
+#### Changed
+
+- Using new core API
+
 ### 0.8.0
 
 #### Changed
