@@ -10,10 +10,10 @@ gi.require_version("Gtk", "3.0")
 
 from gi.repository import Gst, Gtk
 
-from tomate.core import State
-from tomate.core.event import Events, on
-from tomate.core.graph import graph
-from tomate.core.plugin import Plugin, suppress_errors
+from tomate.pomodoro import State
+from tomate.pomodoro.event import Events, on
+from tomate.pomodoro.graph import graph
+from tomate.pomodoro.plugin import Plugin, suppress_errors
 
 logger = logging.getLogger(__name__)
 

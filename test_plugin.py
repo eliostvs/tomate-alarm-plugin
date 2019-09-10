@@ -7,7 +7,7 @@ gi.require_version("Gst", "1.0")
 
 from gi.repository import Gst
 
-from tomate.core.graph import graph
+from tomate.pomodoro.graph import graph
 
 
 def setup_module():
