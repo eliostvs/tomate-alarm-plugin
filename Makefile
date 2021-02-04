@@ -14,6 +14,9 @@ else
 	ARGS =
 endif
 
+format:
+	black data/plugins/
+
 submodule:
 	git submodule init;
 	git submodule update;
