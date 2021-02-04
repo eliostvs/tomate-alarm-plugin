@@ -137,7 +137,7 @@ class SettingsDialog:
             self.file_path.set_text("")
             self.file_path.set_sensitive(False)
 
-    def on_icon_press(self, entry, *_):
+    def on_icon_press(self, entry, *args):
         dialog = Gtk.FileChooserDialog(
             _("Please choose a file"),
             self.widget,
