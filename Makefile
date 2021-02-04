@@ -1,7 +1,6 @@
 #.SILENT:
 
-DATAPATH     = XDG_DATA_DIRS=$(CURDIR)/data:/home/$(USER)/.local/share:/usr/local/share:/usr/share
-DEBUG 		 = TOMATE_DEBUG=true
+DEBUG        = TOMATE_DEBUG=1
 DOCKER_IMAGE = eliostvs/tomate
 OBS_API_URL  = https://api.opensuse.org:443/trigger/runservice
 PLUGINPATH   = $(CURDIR)/data/plugins
@@ -44,7 +43,7 @@ trigger-build:
 
 release-%:
 	git flow init -d
-	@grep -q '\[Unreleased\]' README.md || (echo 'Create the [Unreleased] section in the changelog first!' && exit)
+	@grep -q '\[Unreleased\]' CHANGELOG.md || (echo 'Create the [Unreleased] section in the changelog first!' && exit)
 	bumpversion --verbose --commit $*
 	git flow release start $(VERSION)
 	GIT_MERGE_AUTOEDIT=no git flow release finish -m "Merge branch release/$(VERSION)" -T $(VERSION) $(VERSION) -p

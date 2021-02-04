@@ -14,39 +14,6 @@ Bugs and Suggestions
 
 Bugs and suggestions should be reported [here](https://github.com/eliostvs/tomate-alarm-plugin/issues).
 
-Change Logs
------------
-
-### [Unreleased]
-
-#### Changed
-
-- Using new core API
-
-### 0.8.0
-
-#### Changed
-
-- The Task enum was renamed to Sessions
-
-### 0.7.0
-
-- Choose alarm file
-- Python 3 only
-
-### 0.6.0
-
-- Using py.test
-- Fix gtk warnings
-
-### 0.5.0
-
-- Remove linux package metadata
-
-### 0.4.0
-
-- Using the new event system
-
 License
 -------
 
