@@ -62,11 +62,21 @@ def test_plays_custom_alarm(subject, config):
     subject.activate()
 
     Events.Session.send(State.finished)
-    assert subject.player.props.current_uri == CUSTOM_ALARM
 
     run_loop_for(1)
     assert wait_until(lambda: subject.player.current_state == Gst.State.NULL, timeout=1)
     assert subject.player.props.current_uri is None
+
+
+def test_invalid_custom_alarm(subject, config):
+    config.set(SECTION_NAME, OPTION_NAME, "file://invalid")
+    subject.activate()
+
+    Events.Session.send(State.finished)
+
+    run_loop_for(1)
+    assert wait_until(lambda: subject.player.current_state == Gst.State.NULL, timeout=1)
+    assert subject.player.props.current_uri == "file://invalid"
 
 
 class TestSettingsWindow:
