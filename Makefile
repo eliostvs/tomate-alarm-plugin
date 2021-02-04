@@ -5,8 +5,9 @@ DOCKER_IMAGE = eliostvs/tomate
 OBS_API_URL  = https://api.opensuse.org:443/trigger/runservice
 PLUGINPATH   = $(CURDIR)/data/plugins
 PYTHONPATH   = PYTHONPATH=$(CURDIR)/tomate:$(PLUGINPATH)
-VERSION 	 = `cat .bumpversion.cfg | grep current_version | awk '{print $$3}'`
-WORKDIR 	 = /code
+VERSION      = `cat .bumpversion.cfg | grep current_version | awk '{print $$3}'`
+WORKDIR      = /code
+XDGPATHS     = XDG_DATA_HOME=$(CURDIR)/tests/data XDG_CONFIG_HOME=$(CURDIR)/tests/data
 
 ifeq ($(shell which xvfb-run 1> /dev/null && echo yes),yes)
 	ARGS = xvfb-run -a
@@ -25,7 +26,8 @@ clean:
 	find . \( -iname "*.pyc" -o -iname "__pycache__" -o -iname ".coverage" -o -iname ".cache" -o -iname "*.egg-info" \) -print0 | xargs -0 rm -rf
 
 test: clean
-	$(DATAPATH) $(PYTHONPATH) $(DEBUG) $(ARGS) py.test test_plugin.py --cov=$(PLUGINPATH)
+	echo "$(DEBUG) $(XDGPATHS) $(PYTHONPATH) $(ARGS) py.test $(PYTEST) --cov=$(PLUGINPATH)"
+	$(DEBUG) $(XDGPATHS) $(PYTHONPATH) $(ARGS) py.test $(PYTEST) --cov=$(PLUGINPATH)
 
 docker-clean:
 	docker rmi $(DOCKER_IMAGE) 2> /dev/null || echo $(DOCKER_IMAGE) not found!
