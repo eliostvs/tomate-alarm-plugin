@@ -1,4 +1,4 @@
-#.SILENT:
+.SILENT:
 
 DEBUG        = TOMATE_DEBUG=1
 DOCKER_IMAGE = eliostvs/tomate
