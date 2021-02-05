@@ -1,6 +1,6 @@
 import logging
-import os
 from locale import gettext as _
+from os import path
 from urllib.parse import urlparse
 
 import gi
@@ -28,13 +28,15 @@ class AlarmPlugin(Plugin):
     def __init__(self):
         super(AlarmPlugin, self).__init__()
         self.config = graph.get("tomate.config")
+        self.player = self.create_player()
 
+    def create_player(self):
         Gst.init(None)
-
-        self.player = Gst.ElementFactory.make("playbin", "Player")
-        self.player.set_state(Gst.State.NULL)
-        self.player.bus.add_signal_watch()
-        self.player.bus.connect("message", self.on_message)
+        player = Gst.ElementFactory.make("playbin", "Player")
+        player.set_state(Gst.State.NULL)
+        player.bus.add_signal_watch()
+        player.bus.connect("message", self.on_message)
+        return player
 
     @suppress_errors
     @on(Events.Session, [State.finished])
@@ -69,18 +71,15 @@ class AlarmPlugin(Plugin):
 class SettingsDialog:
     def __init__(self, config, toplevel: Gtk.Widget):
         self.config = config
+        self.create_widget(toplevel)
 
+    def create_widget(self, toplevel):
         grid = Gtk.Grid(column_spacing=12, row_spacing=12, margin_bottom=12)
-
         label = Gtk.Label(label=_("Custom alarm:"), hexpand=True, halign=Gtk.Align.END)
         grid.attach(label, 0, 0, 1, 1)
-
-        self.switch = Gtk.Switch(
-            hexpand=True, halign=Gtk.Align.START, name="alarm_switch"
-        )
+        self.switch = Gtk.Switch(hexpand=True, halign=Gtk.Align.START, name="alarm_switch")
         self.switch.connect("notify::active", self.on_switch_toggle)
         grid.attach_next_to(self.switch, label, Gtk.PositionType.RIGHT, 1, 1)
-
         self.file_path = Gtk.Entry(
             editable=False,
             hexpand=True,
@@ -91,7 +90,6 @@ class SettingsDialog:
         )
         self.file_path.connect("icon-press", self.on_icon_press)
         grid.attach(self.file_path, 0, 1, 4, 1)
-
         self.widget = Gtk.Dialog(
             border_width=12,
             modal=True,
@@ -138,6 +136,22 @@ class SettingsDialog:
             self.file_path.set_sensitive(False)
 
     def on_icon_press(self, entry, *args):
+        dialog = self.create_file_chooser(self.current_folder(entry))
+        response = dialog.run()
+
+        if response == Gtk.ResponseType.OK:
+            self.file_path.set_text(dialog.get_uri())
+
+        dialog.destroy()
+
+    def current_folder(self, entry):
+        return (
+            path.dirname(urlparse(entry.get_text()).path)
+            if entry.get_text()
+            else path.expanduser("~")
+        )
+
+    def create_file_chooser(self, current_folder):
         dialog = Gtk.FileChooserDialog(
             _("Please choose a file"),
             self.widget,
@@ -149,31 +163,12 @@ class SettingsDialog:
                 Gtk.ResponseType.OK,
             ),
         )
-
         dialog.add_filter(self.create_filter("audio/mp3", "audio/mpeg"))
         dialog.add_filter(self.create_filter("audio/ogg", "audio/ogg"))
-
-        if entry.get_text():
-            current_folder = self.current_folder(entry)
-        else:
-            current_folder = os.path.expanduser("~")
-
-        logger.debug("action=setFileChooserFolder folder=%s", current_folder)
         dialog.set_current_folder(current_folder)
+        return dialog
 
-        response = dialog.run()
-
-        if response == Gtk.ResponseType.OK:
-            self.file_path.set_text(dialog.get_uri())
-
-        dialog.destroy()
-
-    @staticmethod
-    def current_folder(entry):
-        return os.path.dirname(urlparse(entry.get_text()).path)
-
-    @staticmethod
-    def create_filter(name, mime_type):
+    def create_filter(self, name, mime_type):
         mime_type_filter = Gtk.FileFilter()
         mime_type_filter.set_name(name)
         mime_type_filter.add_mime_type(mime_type)
