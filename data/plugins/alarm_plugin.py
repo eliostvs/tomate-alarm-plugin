@@ -10,7 +10,6 @@ gi.require_version("Gtk", "3.0")
 
 from gi.repository import Gst, Gtk
 
-from tomate.pomodoro import State
 from tomate.pomodoro.event import Events, on
 from tomate.pomodoro.graph import graph
 from tomate.pomodoro.plugin import Plugin, suppress_errors
@@ -39,12 +38,12 @@ class AlarmPlugin(Plugin):
         return player
 
     @suppress_errors
-    @on(Events.Session, [State.finished])
+    @on(Events.SESSION_END)
     def play(self, *args, **kwargs):
         self.player.props.uri = self.audio_path
         self.player.set_state(Gst.State.PLAYING)
 
-        logger.debug("action=alarmStart uri=%s", self.audio_path)
+        logger.debug("action=alarm_start uri=%s", self.audio_path)
 
     @suppress_errors
     def on_message(self, _, message):
@@ -55,7 +54,7 @@ class AlarmPlugin(Plugin):
 
         elif message.type == Gst.MessageType.ERROR:
             self.player.set_state(Gst.State.NULL)
-            logger.error("action=alarmFailed message='%s-%s'", *message.parse_error())
+            logger.error("action=alarm_failed message='%s-%s'", *message.parse_error())
 
     @property
     def audio_path(self):

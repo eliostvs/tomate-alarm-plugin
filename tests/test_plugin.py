@@ -4,13 +4,12 @@ from os.path import dirname, join
 from typing import Callable
 
 import pytest
-from blinker import signal
+from blinker import NamedSignal
 from gi.repository import Gst, Gtk
-from tomate.pomodoro import State
 from tomate.pomodoro.config import Config
 from tomate.pomodoro.event import Events
 from tomate.pomodoro.graph import graph
-from tomate.ui.test import run_loop_for, Q
+from tomate.ui.test import Q, run_loop_for
 
 CUSTOM_ALARM = f'file://{join(dirname(__file__), "data", "tomate", "media", "custom.ogg")}'
 SECTION_NAME = "alarm_plugin"
@@ -27,29 +26,32 @@ def wait_until(fn: Callable[[], bool], timeout: int = 1, period: int = 0.25):
     return False
 
 
-@pytest.fixture()
-def config(tmpdir):
-    instance = Config(signal("dispatcher"))
-    tmp_path = tmpdir.mkdir("tomate").join("tomate.config")
-    instance.config_path = lambda: tmp_path.strpath
+@pytest.fixture
+def bus():
+    return NamedSignal("Test")
 
-    graph.providers.clear()
-    graph.register_instance("tomate.config", instance)
-    return instance
+
+@pytest.fixture()
+def config(bus, tmpdir):
+    cfg = Config(bus)
+    tmp_path = tmpdir.mkdir("tomate").join("tomate.config")
+    cfg.config_path = lambda: tmp_path.strpath
+    return cfg
 
 
 @pytest.fixture
-def subject(config):
-    Events.Session.receivers.clear()
-
+def subject(bus, config):
+    graph.register_instance("tomate.config", config)
+    graph.register_instance("tomate.bus", bus)
     from alarm_plugin import AlarmPlugin
+
     return AlarmPlugin()
 
 
-def test_plays_alarm_when_session_finish(subject, config):
+def test_plays_alarm_when_session_finish(bus, config, subject):
     subject.activate()
 
-    Events.Session.send(State.finished)
+    bus.send(Events.SESSION_END)
     assert subject.player.props.current_uri == config.media_uri("alarm.ogg")
 
     run_loop_for(1)
@@ -57,22 +59,22 @@ def test_plays_alarm_when_session_finish(subject, config):
     assert subject.player.props.current_uri is None
 
 
-def test_plays_custom_alarm(subject, config):
+def test_plays_custom_alarm(bus, config, subject):
     config.set(SECTION_NAME, OPTION_NAME, CUSTOM_ALARM)
     subject.activate()
 
-    Events.Session.send(State.finished)
+    bus.send(Events.SESSION_END)
 
     run_loop_for(1)
     assert wait_until(lambda: subject.player.current_state == Gst.State.NULL, timeout=1)
     assert subject.player.props.current_uri is None
 
 
-def test_invalid_custom_alarm(subject, config):
+def test_not_plays_invalid_custom_alarm(bus, config, subject):
     config.set(SECTION_NAME, OPTION_NAME, "file://invalid")
     subject.activate()
 
-    Events.Session.send(State.finished)
+    bus.send(Events.SESSION_END)
 
     run_loop_for(1)
     assert wait_until(lambda: subject.player.current_state == Gst.State.NULL, timeout=1)
@@ -80,7 +82,7 @@ def test_invalid_custom_alarm(subject, config):
 
 
 class TestSettingsWindow:
-    def test_without_custom_alarm(self, subject, config):
+    def test_without_custom_alarm(self, config, subject):
         config.remove(SECTION_NAME, OPTION_NAME)
         window = subject.settings_window(Gtk.Window())
         window.run()
@@ -105,7 +107,7 @@ class TestSettingsWindow:
         switch = Q.select(window.widget, Q.name("alarm_switch"))
         assert switch.get_active() is True
 
-    def test_enable_custom_alarm(self, subject, config):
+    def test_enable_custom_alarm(self, config, subject):
         window = subject.settings_window(Gtk.Window())
         window.run()
 
@@ -120,7 +122,7 @@ class TestSettingsWindow:
         window.widget.emit("response", 0)
         assert config.get(SECTION_NAME, OPTION_NAME) == CUSTOM_ALARM
 
-    def test_disable_custom_alarm(self, subject, config):
+    def test_disable_custom_alarm(self, config, subject):
         config.set(SECTION_NAME, OPTION_NAME, CUSTOM_ALARM)
 
         window = subject.settings_window(Gtk.Window())
