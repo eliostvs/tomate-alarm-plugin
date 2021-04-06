@@ -25,14 +25,14 @@ else
 	ARGS =
 endif
 
-.PHONY: clean
-format:
-	black data/plugins/ tests
-
 .PHONY: submodule
 submodule:
 	git submodule init;
 	git submodule update;
+
+.PHONY: format
+format:
+	black data/plugins/ tests
 
 .PHONY: clean
 clean:
