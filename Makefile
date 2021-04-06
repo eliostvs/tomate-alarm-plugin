@@ -43,6 +43,17 @@ test: clean
 	echo "$(DEBUG) $(XDGPATH) $(PYTHONPATH) $(ARGS) py.test $(PYTEST) --cov=$(PLUGINPATH)"
 	$(DEBUG) $(XDGPATH) $(PYTHONPATH) $(ARGS) py.test $(PYTEST) --cov=$(PLUGINPATH)
 
+.PHONY: trigger-build
+trigger-build:
+	curl -X POST -H "Authorization: Token $(TOKEN)" $(OBS_API_URL)
+
+release-%:
+	git flow init -d
+	@grep -q '\[Unreleased\]' CHANGELOG.md || (echo 'Create the [Unreleased] section in the changelog first!' && exit)
+	bumpversion --verbose --commit $*
+	git flow release start $(VERSION)
+	GIT_MERGE_AUTOEDIT=no git flow release finish -m "Merge branch release/$(VERSION)" -T $(VERSION) $(VERSION) -p
+
 .PHONY: docker-clean
 docker-clean:
 	docker rmi $(DOCKER_IMAGE) 2> /dev/null || echo $(DOCKER_IMAGE) not found!
@@ -61,14 +72,3 @@ docker-all: docker-clean docker-pull docker-test docker-enter
 .PHONY: docker-enter
 docker-enter:
 	docker run --rm -v $(CURDIR):$(WORKDIR) --workdir $(WORKDIR) -it --entrypoint="bash" $(DOCKER_IMAGE)
-
-.PHONY: trigger-build
-trigger-build:
-	curl -X POST -H "Authorization: Token $(TOKEN)" $(OBS_API_URL)
-
-release-%:
-	git flow init -d
-	@grep -q '\[Unreleased\]' CHANGELOG.md || (echo 'Create the [Unreleased] section in the changelog first!' && exit)
-	bumpversion --verbose --commit $*
-	git flow release start $(VERSION)
-	GIT_MERGE_AUTOEDIT=no git flow release finish -m "Merge branch release/$(VERSION)" -T $(VERSION) $(VERSION) -p
