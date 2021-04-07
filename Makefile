@@ -43,16 +43,16 @@ test: clean
 	echo "$(DEBUG) $(XDGPATH) $(PYTHONPATH) $(ARGS) py.test $(PYTEST) --cov=$(PLUGINPATH)"
 	$(DEBUG) $(XDGPATH) $(PYTHONPATH) $(ARGS) py.test $(PYTEST) --cov=$(PLUGINPATH)
 
-.PHONY: trigger-build
-trigger-build:
-	curl -X POST -H "Authorization: Token $(TOKEN)" $(OBS_API_URL)
-
 release-%:
 	git flow init -d
 	@grep -q '\[Unreleased\]' CHANGELOG.md || (echo 'Create the [Unreleased] section in the changelog first!' && exit)
 	bumpversion --verbose --commit $*
 	git flow release start $(VERSION)
 	GIT_MERGE_AUTOEDIT=no git flow release finish -m "Merge branch release/$(VERSION)" -T $(VERSION) $(VERSION) -p
+
+.PHONY: trigger-build
+trigger-build:
+	curl -X POST -H "Authorization: Token $(TOKEN)" $(OBS_API_URL)
 
 .PHONY: docker-clean
 docker-clean:
