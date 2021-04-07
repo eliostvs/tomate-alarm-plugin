@@ -39,10 +39,9 @@ class AlarmPlugin(Plugin):
 
     @suppress_errors
     @on(Events.SESSION_END)
-    def play(self, *args, **kwargs):
+    def play(self, *_, **__):
         self.player.props.uri = self.audio_path
         self.player.set_state(Gst.State.PLAYING)
-
         logger.debug("action=alarm_start uri=%s", self.audio_path)
 
     @suppress_errors
@@ -50,7 +49,7 @@ class AlarmPlugin(Plugin):
         logger.debug("action=onMessage messageType=%s", message.type)
         if message.type == Gst.MessageType.EOS:
             self.player.set_state(Gst.State.NULL)
-            logger.debug("action=alarmComplete")
+            logger.debug("action=alarm_eos")
 
         elif message.type == Gst.MessageType.ERROR:
             self.player.set_state(Gst.State.NULL)
