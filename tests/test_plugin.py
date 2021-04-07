@@ -41,11 +41,13 @@ def config(bus, tmpdir):
 
 @pytest.fixture
 def subject(bus, config):
+    graph.providers.clear()
     graph.register_instance("tomate.config", config)
     graph.register_instance("tomate.bus", bus)
-    from alarm_plugin import AlarmPlugin
 
-    return AlarmPlugin()
+    import alarm_plugin
+
+    return alarm_plugin.AlarmPlugin()
 
 
 def test_plays_alarm_when_session_finish(bus, config, subject):
