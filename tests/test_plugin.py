@@ -6,10 +6,11 @@ from typing import Callable
 import pytest
 from blinker import NamedSignal
 from gi.repository import Gst, Gtk
+
 from tomate.pomodoro.config import Config
 from tomate.pomodoro.event import Events
 from tomate.pomodoro.graph import graph
-from tomate.ui.test import Q, run_loop_for
+from tomate.ui.testing import Q, run_loop_for
 
 CUSTOM_ALARM = f'file://{join(dirname(__file__), "data", "tomate", "media", "custom.ogg")}'
 SECTION_NAME = "alarm_plugin"
