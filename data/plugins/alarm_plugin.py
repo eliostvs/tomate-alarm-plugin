@@ -10,9 +10,10 @@ gi.require_version("Gtk", "3.0")
 
 from gi.repository import Gst, Gtk
 
+import tomate.pomodoro.plugin as plugin
 from tomate.pomodoro.event import Events, on
 from tomate.pomodoro.graph import graph
-from tomate.pomodoro.plugin import Plugin, suppress_errors
+from tomate.pomodoro.plugin import suppress_errors
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,7 @@ SECTION_NAME = "alarm_plugin"
 OPTION_NAME = "file_uri"
 
 
-class AlarmPlugin(Plugin):
+class AlarmPlugin(plugin.Plugin):
     has_settings = True
 
     @suppress_errors
@@ -133,7 +134,7 @@ class SettingsDialog:
             self.file_path.set_text("")
             self.file_path.set_sensitive(False)
 
-    def on_icon_press(self, entry, *args):
+    def on_icon_press(self, entry, *_):
         dialog = self.create_file_chooser(self.current_folder(entry))
         response = dialog.run()
 
