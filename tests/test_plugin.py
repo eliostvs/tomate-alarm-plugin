@@ -5,8 +5,9 @@ from typing import Callable
 
 import pytest
 from gi.repository import Gst, Gtk
+from wiring import Graph
 
-from tomate.pomodoro import Bus, Config, Events, graph
+from tomate.pomodoro import Bus, Config, Events
 from tomate.ui.testing import Q, run_loop_for
 
 CUSTOM_ALARM = f'file://{join(dirname(__file__), "data", "tomate", "media", "custom.ogg")}'
@@ -38,7 +39,14 @@ def config(bus, tmpdir) -> Config:
 
 
 @pytest.fixture
-def plugin(bus, config):
+def graph() -> Graph:
+    g = Graph()
+    g.register_instance(Graph, g)
+    return g
+
+
+@pytest.fixture
+def plugin(bus, config, graph):
     graph.providers.clear()
     graph.register_instance("tomate.config", config)
     graph.register_instance("tomate.bus", bus)
@@ -46,7 +54,7 @@ def plugin(bus, config):
     import alarm_plugin
 
     instance = alarm_plugin.AlarmPlugin()
-    instance.connect(bus)
+    instance.configure(bus, graph)
     return instance
 
 

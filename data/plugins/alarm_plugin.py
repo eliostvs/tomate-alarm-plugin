@@ -8,10 +8,11 @@ import gi
 gi.require_version("Gst", "1.0")
 gi.require_version("Gtk", "3.0")
 
+from wiring import Graph
 from gi.repository import Gst, Gtk
 
 import tomate.pomodoro.plugin as plugin
-from tomate.pomodoro import Events, on, graph, suppress_errors
+from tomate.pomodoro import Bus, Config, Events, on, suppress_errors
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +25,13 @@ class AlarmPlugin(plugin.Plugin):
 
     @suppress_errors
     def __init__(self):
-        super(AlarmPlugin, self).__init__()
-        self.config = graph.get("tomate.config")
+        super().__init__()
+        self.config = None
         self.player = self.create_player()
+
+    def configure(self, bus: Bus, graph: Graph) -> None:
+        super().configure(bus, graph)
+        self.config = graph.get("tomate.config")
 
     def create_player(self):
         Gst.init(None)
@@ -39,9 +44,9 @@ class AlarmPlugin(plugin.Plugin):
     @suppress_errors
     @on(Events.SESSION_END)
     def play(self, *_, **__):
+        logger.debug("action=alarm_start uri=%s", self.audio_path)
         self.player.props.uri = self.audio_path
         self.player.set_state(Gst.State.PLAYING)
-        logger.debug("action=alarm_start uri=%s", self.audio_path)
 
     @suppress_errors
     def on_message(self, _, message):
@@ -66,7 +71,7 @@ class AlarmPlugin(plugin.Plugin):
 
 
 class SettingsDialog:
-    def __init__(self, config, toplevel: Gtk.Widget):
+    def __init__(self, config: Config, toplevel):
         self.config = config
         self.create_widget(toplevel)
 
