@@ -94,7 +94,6 @@ class TestSettingsWindow:
     def test_without_custom_alarm(self, config, plugin):
         config.remove(SECTION_NAME, OPTION_NAME)
         dialog = plugin.settings_window(Gtk.Window())
-        dialog.run()
 
         entry = Q.select(dialog.widget, Q.props("name", "custom_entry"))
         assert entry.props.text == ""
@@ -118,7 +117,6 @@ class TestSettingsWindow:
 
     def test_configures_custom_alarm(self, config, plugin):
         dialog = plugin.settings_window(Gtk.Window())
-        dialog.run()
 
         switch = Q.select(dialog.widget, Q.props("name", "custom_switch"))
         switch.props.active = True
@@ -136,7 +134,6 @@ class TestSettingsWindow:
         config.set(SECTION_NAME, OPTION_NAME, CUSTOM_ALARM)
 
         dialog = plugin.settings_window(Gtk.Window())
-        dialog.run()
 
         switch = Q.select(dialog.widget, Q.props("name", "custom_switch"))
         switch.props.active = False
