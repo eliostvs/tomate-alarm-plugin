@@ -43,13 +43,13 @@ class AlarmPlugin(plugin.Plugin):
 
     @suppress_errors
     @on(Events.SESSION_END)
-    def play(self, *_, **__):
+    def play(self, **__) -> None:
         logger.debug("action=alarm_start uri=%s", self.audio_path)
         self.player.props.uri = self.audio_path
         self.player.set_state(Gst.State.PLAYING)
 
     @suppress_errors
-    def on_message(self, _, message):
+    def on_message(self, _, message) -> None:
         logger.debug("action=onMessage messageType=%s", message.type)
         if message.type == Gst.MessageType.EOS:
             self.player.set_state(Gst.State.NULL)
@@ -60,7 +60,7 @@ class AlarmPlugin(plugin.Plugin):
             logger.error("action=alarm_failed message='%s-%s'", *message.parse_error())
 
     @property
-    def audio_path(self):
+    def audio_path(self) -> str:
         return self.config.get(
             SECTION_NAME, OPTION_NAME, fallback=self.config.media_uri("alarm.ogg")
         )
@@ -89,7 +89,7 @@ class SettingsDialog:
         dialog.get_content_area().add(self.create_options())
         return dialog
 
-    def create_options(self):
+    def create_options(self) -> Gtk.Grid:
         custom_audio = self.config.get(SECTION_NAME, OPTION_NAME, fallback="")
 
         grid = Gtk.Grid(column_spacing=12, row_spacing=12, margin_bottom=12, margin_top=12)
@@ -104,7 +104,7 @@ class SettingsDialog:
 
         return grid
 
-    def create_custom_alarm_input(self, custom_audio):
+    def create_custom_alarm_input(self, custom_audio) -> Gtk.Entry:
         entry = Gtk.Entry(
             editable=False,
             hexpand=True,
@@ -118,7 +118,7 @@ class SettingsDialog:
         entry.connect("notify::text", self.custom_alarm_changed)
         return entry
 
-    def create_custom_alarm_switch(self, custom_audio, entry):
+    def create_custom_alarm_switch(self, custom_audio, entry) -> Gtk.Switch:
         switch = Gtk.Switch(
             hexpand=True,
             halign=Gtk.Align.START,
@@ -137,7 +137,7 @@ class SettingsDialog:
 
         dialog.destroy()
 
-    def dirname(self, audio_path: str):
+    def dirname(self, audio_path: str) -> str:
         return path.dirname(urlparse(audio_path).path) if audio_path else path.expanduser("~")
 
     def create_file_chooser(self, current_folder: str) -> Gtk.FileChooserDialog:
