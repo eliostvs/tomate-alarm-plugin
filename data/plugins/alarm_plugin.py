@@ -43,13 +43,13 @@ class AlarmPlugin(plugin.Plugin):
 
     @suppress_errors
     @on(Events.SESSION_END)
-    def play(self, *_, **__):
+    def play(self, **__) -> None:
         logger.debug("action=alarm_start uri=%s", self.audio_path)
         self.player.props.uri = self.audio_path
         self.player.set_state(Gst.State.PLAYING)
 
     @suppress_errors
-    def on_message(self, _, message):
+    def on_message(self, _, message) -> None:
         logger.debug("action=onMessage messageType=%s", message.type)
         if message.type == Gst.MessageType.EOS:
             self.player.set_state(Gst.State.NULL)
@@ -60,7 +60,7 @@ class AlarmPlugin(plugin.Plugin):
             logger.error("action=alarm_failed message='%s-%s'", *message.parse_error())
 
     @property
-    def audio_path(self):
+    def audio_path(self) -> str:
         return self.config.get(
             SECTION_NAME, OPTION_NAME, fallback=self.config.media_uri("alarm.ogg")
         )
@@ -75,35 +75,6 @@ class SettingsDialog:
         self.widget = self.create_dialog(toplevel)
 
     def create_dialog(self, toplevel: Gtk.Dialog) -> Gtk.Dialog:
-        custom_audio = self.config.get(SECTION_NAME, OPTION_NAME, fallback="")
-
-        grid = Gtk.Grid(column_spacing=12, row_spacing=12, margin_bottom=12, margin_top=12)
-
-        label = Gtk.Label(label=_("Custom:"), hexpand=True, halign=Gtk.Align.END)
-        grid.attach(label, 0, 0, 1, 1)
-
-        entry = Gtk.Entry(
-            editable=False,
-            hexpand=True,
-            name="custom_entry",
-            secondary_icon_activatable=True,
-            secondary_icon_name=Gtk.STOCK_FILE,
-            sensitive=bool(custom_audio),
-            text=custom_audio,
-        )
-        entry.connect("icon-press", self.select_custom_alarm)
-        entry.connect("notify::text", self.custom_alarm_changed)
-        grid.attach(entry, 0, 1, 4, 1)
-
-        switch = Gtk.Switch(
-            hexpand=True,
-            halign=Gtk.Align.START,
-            active=bool(custom_audio),
-            name="custom_switch",
-        )
-        switch.connect("notify::active", self.custom_alarm_toggle, entry)
-        grid.attach_next_to(switch, label, Gtk.PositionType.RIGHT, 1, 1)
-
         dialog = Gtk.Dialog(
             border_width=12,
             modal=True,
@@ -115,8 +86,47 @@ class SettingsDialog:
         dialog.add_button(_("Close"), Gtk.ResponseType.CLOSE)
         dialog.connect("response", lambda widget, _: widget.destroy())
         dialog.set_size_request(350, -1)
-        dialog.get_content_area().add(grid)
+        dialog.get_content_area().add(self.create_options())
         return dialog
+
+    def create_options(self) -> Gtk.Grid:
+        custom_audio = self.config.get(SECTION_NAME, OPTION_NAME, fallback="")
+
+        grid = Gtk.Grid(column_spacing=12, row_spacing=12, margin_bottom=12, margin_top=12)
+        label = Gtk.Label(label=_("Custom:"), hexpand=True, halign=Gtk.Align.END)
+        grid.attach(label, 0, 0, 1, 1)
+
+        entry = self.create_custom_alarm_input(custom_audio)
+        grid.attach(entry, 0, 1, 4, 1)
+
+        switch = self.create_custom_alarm_switch(custom_audio, entry)
+        grid.attach_next_to(switch, label, Gtk.PositionType.RIGHT, 1, 1)
+
+        return grid
+
+    def create_custom_alarm_input(self, custom_audio) -> Gtk.Entry:
+        entry = Gtk.Entry(
+            editable=False,
+            hexpand=True,
+            name="custom_entry",
+            secondary_icon_activatable=True,
+            secondary_icon_name=Gtk.STOCK_FILE,
+            sensitive=bool(custom_audio),
+            text=custom_audio,
+        )
+        entry.connect("icon-press", self.select_custom_alarm)
+        entry.connect("notify::text", self.custom_alarm_changed)
+        return entry
+
+    def create_custom_alarm_switch(self, custom_audio, entry) -> Gtk.Switch:
+        switch = Gtk.Switch(
+            hexpand=True,
+            halign=Gtk.Align.START,
+            active=bool(custom_audio),
+            name="custom_switch",
+        )
+        switch.connect("notify::active", self.custom_alarm_toggle, entry)
+        return switch
 
     def select_custom_alarm(self, entry: Gtk.Entry, *_) -> None:
         dialog = self.create_file_chooser(self.dirname(entry.props.text))
@@ -127,7 +137,7 @@ class SettingsDialog:
 
         dialog.destroy()
 
-    def dirname(self, audio_path: str):
+    def dirname(self, audio_path: str) -> str:
         return path.dirname(urlparse(audio_path).path) if audio_path else path.expanduser("~")
 
     def create_file_chooser(self, current_folder: str) -> Gtk.FileChooserDialog:

@@ -93,32 +93,30 @@ class TestPlugin:
 class TestSettingsWindow:
     def test_without_custom_alarm(self, config, plugin):
         config.remove(SECTION_NAME, OPTION_NAME)
-        window = plugin.settings_window(Gtk.Window())
-        window.run()
+        dialog = plugin.settings_window(Gtk.Window())
 
-        entry = Q.select(window.widget, Q.props("name", "custom_entry"))
+        entry = Q.select(dialog.widget, Q.props("name", "custom_entry"))
         assert entry.props.text == ""
         assert entry.props.sensitive is False
 
-        switch = Q.select(window.widget, Q.props("name", "custom_switch"))
+        switch = Q.select(dialog.widget, Q.props("name", "custom_switch"))
         assert switch.props.active is False
 
     def test_with_custom_alarm(self, plugin, config):
         config.set(SECTION_NAME, OPTION_NAME, CUSTOM_ALARM)
 
-        window = plugin.settings_window(Gtk.Window())
-        window.run()
+        dialog = plugin.settings_window(Gtk.Window())
+        dialog.run()
 
-        entry = Q.select(window.widget, Q.props("name", "custom_entry"))
+        entry = Q.select(dialog.widget, Q.props("name", "custom_entry"))
         assert entry.props.text == CUSTOM_ALARM
         assert entry.props.sensitive is True
 
-        switch = Q.select(window.widget, Q.props("name", "custom_switch"))
+        switch = Q.select(dialog.widget, Q.props("name", "custom_switch"))
         assert switch.props.active is True
 
     def test_configures_custom_alarm(self, config, plugin):
         dialog = plugin.settings_window(Gtk.Window())
-        dialog.run()
 
         switch = Q.select(dialog.widget, Q.props("name", "custom_switch"))
         switch.props.active = True
@@ -136,7 +134,6 @@ class TestSettingsWindow:
         config.set(SECTION_NAME, OPTION_NAME, CUSTOM_ALARM)
 
         dialog = plugin.settings_window(Gtk.Window())
-        dialog.run()
 
         switch = Q.select(dialog.widget, Q.props("name", "custom_switch"))
         switch.props.active = False
