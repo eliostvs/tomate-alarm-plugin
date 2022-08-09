@@ -47,4 +47,5 @@ setup(
     url="https://github.com/eliostvs/tomate-alarm-plugin",
     version="0.11.0",
     zip_safe=False,
+    py_module=[],
 )
