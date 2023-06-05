@@ -1,6 +1,8 @@
 Tomate Alarm Plugin
 ===================
 
+This plugin has been joined to tomate-gtk [tomate-gtk](https://github.com/eliostvs/tomate-gtk).
+
 Tomate is a timer for the Pomodoro Technique.
 This plugin plays a alarm when the timer ends.
 
